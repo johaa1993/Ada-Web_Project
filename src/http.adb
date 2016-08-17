@@ -1,64 +1,9 @@
 with Ada.Text_IO;
 with Ada.Text_IO.Text_Streams;
+with Ada.Strings.Fixed;
+with LW_HTTP_Parser;
 
 package body HTTP is
-
-   procedure Read_Line (Stream : not null access Ada.Streams.Root_Stream_Type'Class; Item : out String; P : in out Natural) is
-   begin
-      loop
-         Character'Read (Stream, Item (P));
-         if Item (P) = CR then
-            P := P + 1;
-            Character'Read (Stream, Item (P));
-            if Item (P) = LF then
-               exit;
-            end if;
-         else
-            P := P + 1;
-         end if;
-      end loop;
-   end;
-
-   procedure Read_Line (Stream : not null access Ada.Streams.Root_Stream_Type'Class; Item : out String) is
-      P : Integer;
-   begin
-      P := Item'First;
-      Read_Line (Stream, Item, P);
-   end;
-
-   procedure Read_Part (Stream : not null access Ada.Streams.Root_Stream_Type'Class; Item : out String; P : in out Natural) is
-   begin
-      loop
-         Character'Read (Stream, Item (P));
-         if Item (P) = ' ' then
-            exit;
-         end if;
-         P := P + 1;
-      end loop;
-   end;
-
-   procedure Read_Part (Stream : not null access Ada.Streams.Root_Stream_Type'Class; Item : out String) is
-      P : Integer;
-   begin
-      P := Item'First;
-      Read_Part (Stream, Item, P);
-   end;
-
-   function Read_Method (Stream : not null access Ada.Streams.Root_Stream_Type'Class) return Methods.Method is
-      Method_Raw : String (1 .. Methods.Method'Width);
-      P : Integer;
-   begin
-      P := Method_Raw'First;
-      Read_Part (Stream, Method_Raw, P);
-      P := P - 1;
-      if P = 3 and then Method_Raw (Method_Raw'First .. P) = "GET" then
-         return Methods.Get;
-      elsif P = 4 and then Method_Raw (Method_Raw'First .. P) = "POST" then
-         return Methods.Post;
-      else
-         return Methods.Unknown;
-      end if;
-   end;
 
    procedure Put (R : Request_Line) is
       use Ada.Text_IO;
@@ -79,15 +24,19 @@ package body HTTP is
       New_Line;
    end;
 
-
-
-   procedure Read_Request_Line (Stream : not null access Ada.Streams.Root_Stream_Type'Class; R : out Request_Line) is
+   procedure Read_Request_Line (Stream : Stream_Access; R : out Request_Line) is
+      use Ada.Characters.Latin_1;
+      Last : Integer;
    begin
-      Read_Part (Stream, R.Method_Text);
-      Read_Part (Stream, R.URI_Text);
-      Read_Line (Stream, R.HTTP_Version_Text);
+      Last := 0;
+      LW_HTTP_Parser.Read_Until (Stream, Space, Last, R.Method_Text);
+      Last := 0;
+      LW_HTTP_Parser.Read_Until (Stream, Space, Last, R.URI_Text);
+      Last := 0;
+      LW_HTTP_Parser.Read_Until (Stream, CR, Last, R.HTTP_Version_Text);
+      LW_HTTP_Parser.Read_Until (Stream, LF, Last, R.HTTP_Version_Text);
+      -- TODO add error handling
    end;
-
 
    procedure Read_File (Filename : String; Item : out String) is
       use Ada.Text_IO;
@@ -101,6 +50,5 @@ package body HTTP is
       end loop;
       Close (F);
    end;
-
 
 end HTTP;
