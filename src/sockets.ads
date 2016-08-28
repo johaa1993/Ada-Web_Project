@@ -18,15 +18,4 @@ package Sockets is
 
    procedure Receive (Node : Socket; Buffer : out String; Count : out Integer);
 
-   type Parseable_Buffer (Size : Natural) is record
-      Data : String (1 .. Size);
-      First : Integer := 0;
-      Last : Integer := 0;
-      Number_Of_Receive : Natural := 0;
-   end record;
-
-   procedure Receive (Node : Socket; Item : in out Parseable_Buffer);
-
-   function Is_Terminated (Item : Parseable_Buffer; Terminator : String) return Boolean;
-
 end Sockets;

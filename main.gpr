@@ -2,7 +2,9 @@ project Main is
 
    for Languages use ("ada");
    for Source_Dirs use ("src");
-   for Main use ("main_test.adb");
+   --for Main use ("main_test.adb");
+   --for Main use ("main_test_enum.adb");
+   for Main use ("main_test_string_buffer.adb");
    for Object_Dir use "obj";
    for Exec_Dir use "bin";
 
@@ -21,6 +23,9 @@ project Main is
       for Default_Switches ("ada") use ("-v", "-f", "-d");
       for Executable ("main.adb") use "main";
 	  for Executable ("main_test.adb") use "main";
+	  for Executable ("main_test_parse.adb") use "main";
+	  for Executable ("main_test_enum_flag.adb") use "main";
+	  for Executable ("main_test_string_buffer.adb") use "main";
    end Builder;
 
    -- "-gnatwa"

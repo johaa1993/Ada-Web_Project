@@ -1,14 +1,8 @@
-with Ada.Characters.Latin_1;
-with Ada.Strings.Fixed;
-with Ada.Streams;
-with Sockets;
-
+with Ada.Characters.Latin_1; use Ada.Characters.Latin_1;
+with HTTP_Sockets; use HTTP_Sockets;
+with Parse_Tools; use Parse_Tools;
 
 package HTTP is
-
-   use Ada.Characters.Latin_1;
-   use Ada.Streams;
-   use Sockets;
 
    End_Of_Line_Seq : constant String := CR & LF;
 
@@ -18,7 +12,7 @@ package HTTP is
 
    procedure Read_File (Filename : String; Item : out String);
 
-   function Parse_Method (Source : in out Parseable_Buffer) return Methods.Method;
-   function Parse_URI (Source : in out Parseable_Buffer) return String;
+   function Convert (Source : String) return Methods.Method;
+
 
 end HTTP;

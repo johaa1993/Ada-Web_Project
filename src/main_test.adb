@@ -3,6 +3,7 @@ with Ada.Text_IO;
 with Ada.Streams;
 with Sockets;
 with HTTP;
+with HTTP_Sockets;
 
 procedure Main_Test is
    use Ada.Text_IO;
@@ -16,7 +17,7 @@ procedure Main_Test is
    Client_Socket : Socket_Type;
    Client_Address : Sock_Addr_Type;
    Request_No_Block : Request_Type := (Non_Blocking_IO, True);
-   Client_Data : Sockets.Parseable_Buffer (5000);
+   Client_Data : HTTP_Sockets.Parseable_Buffer (5000);
    C : Character;
 begin
    Initialize;
@@ -43,15 +44,17 @@ begin
       Put_Line ("Status " & Status'Img);
       Empty (Read_Set);
 
-      Sockets.Receive (Client_Socket, Client_Data);
+      HTTP_Sockets.Receive (Client_Socket, Client_Data);
       Put_Line ("Last " & Client_Data.Last'Img);
       Put_Line ("Buffer ");
       Put (Client_Data.Data (Client_Data.Data'First .. Client_Data.Last));
       New_Line;
 
-      Put_Line ("Method: " & HTTP.Parse_Method (Client_Data)'Img);
-      Put_Line ("URI: " & HTTP.Parse_URI (Client_Data));
-
+      Put_Line ("Method: " & HTTP_Sockets.Parse_Method (Client_Data));
+      Put_Line ("URI: " & HTTP_Sockets.Parse_URI (Client_Data));
+      Put_Line ("HTTP_Version: " & HTTP_Sockets.Parse_HTTP_Version (Client_Data));
+      Put_Line ("Field_Name: " & HTTP_Sockets.Parse_Field_Name (Client_Data));
+      Put_Line ("Field_Value: " & HTTP_Sockets.Parse_Field_Value (Client_Data));
       exit when C = 'q';
    end loop;
 

@@ -9,21 +9,6 @@ package body Sockets is
       null;
    end;
 
-   procedure Receive (Node : Socket; Item : in out Parseable_Buffer) is
-      Count : Integer;
-   begin
-      Receive (Node, Item.Data (Item.Last + 1 .. Item.Data'Last), Count);
-      Item.Last := Item.Last + Count;
-      Item.Number_Of_Receive := Item.Number_Of_Receive + 1;
-   end;
-
-   function Is_Terminated (Item : Parseable_Buffer; Terminator : String) return Boolean is
-      Result : Boolean;
-   begin
-      Result := Item.Data (Item.Last - Terminator'Length + 1 .. Item.Data'Last) = Terminator;
-      return Result;
-   end;
-
 
 
 end Sockets;
