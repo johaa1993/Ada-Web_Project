@@ -26,21 +26,35 @@ package body Parse_Tools is
       return P;
    end;
 
-   procedure Parse_Find_Inclusive_Interval (Source : String; Pattern : String; A : out Integer; B : in out Integer) is
+   procedure Parse_AB (Source : String; Pattern : String; A : out Integer; B : in out Integer) is
    begin
       A := B + 1;
       B := Parse_Find_Inclusive (Source (A .. Source'Last), Pattern);
    end;
 
-   function Init_Interval (Source : String) return Interval is
+   function Init (Source : String) return Iterator is
    begin
       return (Source'First, Source'First - 1);
    end;
 
-
-   procedure Parse_Find_Inclusive_Interval (Source : String; Pattern : String; I : in out Interval) is
+   procedure Parse (I : in out Iterator; Source : String; Pattern : String) is
    begin
-      Parse_Find_Inclusive_Interval (Source, Pattern, I.A, I.B);
+      Parse_AB (Source, Pattern, I.A, I.B);
+   end;
+
+   function Get_Reference (I : Iterator; Source : aliased in out String) return Slicing.Reference_Type is
+   begin
+      return Slicing.Slice (Source, I.A, I.B);
+   end;
+
+   function Get (I : Iterator; Source : String) return String is
+   begin
+      return Source (I.A .. I.B);
+   end;
+
+   function End_Of_Line (I : Iterator; Source : String) return Boolean is
+   begin
+      return I.B > Source'Last;
    end;
 
 end Parse_Tools;

@@ -33,14 +33,24 @@ package body String_Buffers is
       Container.Last := Item_Index'Last;
    end;
 
-   function Get (Item : Buffer) return Accessor is
+   function Get_Occupied_Space_Reference (Item : in out Buffer) return String_Access is
    begin
-      return Accessor'(Data => Item.Data (Item.Data'First .. Item.Last)'Unrestricted_Access);
+      return Item.Data (Item.Data'First .. Item.Last)'Unrestricted_Access;
    end;
 
-   function Get_Free_Space (Item : Buffer) return Accessor is
+   function Get_Free_Space_Reference (Item : in out Buffer) return String_Access is
    begin
-      return Accessor'(Data => Item.Data (Item.Last + 1 .. Item.Data'Last)'Unrestricted_Access);
+      return Item.Data (Item.Last + 1 .. Item.Data'Last)'Unrestricted_Access;
+   end;
+
+   function Get_Occupied_Space (Item : Buffer) return String is
+   begin
+      return Item.Data (Item.Data'First .. Item.Last);
+   end;
+
+   function Get_Free_Space (Item : Buffer) return String is
+   begin
+      return Item.Data (Item.Last + 1 .. Item.Data'Last);
    end;
 
    procedure Decrease_Free_Space (Item : in out Buffer; Count : Natural) is

@@ -1,14 +1,19 @@
+with Drake.References.Strings; use Drake.References.Strings;
+
 package Parse_Tools is
 
-   type Interval is record
+   type Iterator is private;
+   function Init (Source : String) return Iterator;
+   procedure Parse (I : in out Iterator; Source : String; Pattern : String);
+   function Get_Reference (I : Iterator; Source : aliased in out String) return Slicing.Reference_Type;
+   function Get (I : Iterator; Source : String) return String;
+   function End_Of_Line (I : Iterator; Source : String) return Boolean;
+
+private
+
+   type Iterator is record
       A : Integer;
       B : Integer;
    end record;
-
-   function Init_Interval (Source : String) return Interval;
-
-   function Parse_Find_Inclusive (Source : String; Pattern : String) return Integer;
-   procedure Parse_Find_Inclusive_Interval (Source : String; Pattern : String; A : out Integer; B : in out Integer);
-   procedure Parse_Find_Inclusive_Interval (Source : String; Pattern : String; I : in out Interval);
 
 end Parse_Tools;

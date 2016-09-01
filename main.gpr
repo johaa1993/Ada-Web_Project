@@ -4,7 +4,9 @@ project Main is
    for Source_Dirs use ("src");
    --for Main use ("main_test.adb");
    --for Main use ("main_test_enum.adb");
-   for Main use ("main_test_string_buffer.adb");
+   --for Main use ("main_test_string_buffer.adb");
+   --for Main use ("main_test_parse_tools.adb");
+   for Main use ("test_socket1.adb");
    for Object_Dir use "obj";
    for Exec_Dir use "bin";
 
@@ -12,7 +14,7 @@ project Main is
    -- Force the complete processing of all phases (or of those explicitly specified) even when up to date.
 
    -- -d (Display progress)
-   -- Display progress for each source, up to date or not, as a single line completed x out of y (zz%).... If the file needs to be compiled this is displayed after the invocation of the compiler. These lines are displayed even in quiet output mode (switch -q).
+   -- Display progress for each source, up to date or not, as a single line completed x out of y (zz%).... If the file needs to be compiled this is displayed after the invocation of the compiler. These lines are displayed even in quiet output mode (switch
 
    -- -v (Verbose output)
    -- Display full paths, all options used in spawned processes, and reasons why these processes are spawned. Cancel any previous switch -q.
@@ -20,12 +22,8 @@ project Main is
    -- -p or --create-missing-dirs (Create missing object, library and exec directories)
 
    package Builder is
-      for Default_Switches ("ada") use ("-v", "-f", "-d");
-      for Executable ("main.adb") use "main";
-	  for Executable ("main_test.adb") use "main";
-	  for Executable ("main_test_parse.adb") use "main";
-	  for Executable ("main_test_enum_flag.adb") use "main";
-	  for Executable ("main_test_string_buffer.adb") use "main";
+      for Default_Switches ("ada") use ("-v", "-f", "-d", "-j2");
+      for Executable ("test_socket1.adb") use "main";
    end Builder;
 
    -- "-gnatwa"
@@ -42,4 +40,9 @@ project Main is
       for Default_Switches ("ada") use ("-gnata", "-gnatf", "-g");
    end Compiler;
 
+   package Linker is
+      for Default_Switches ("ada") use ("-g");
+   end Linker;
+
 end Main;
+
