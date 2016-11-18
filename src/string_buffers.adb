@@ -1,27 +1,24 @@
+with Ada.Unchecked_Conversion;
+
 package body String_Buffers is
 
-   function Is_Full (Container : Buffer) return Boolean is
-   begin
-      return Container.Last >= Container.Data'Last;
-   end;
+   function Get_Free_Space_Index_First (Item : Buffer) return Natural is            (Item.Last + 1);
+   function Get_Free_Space_Index_Last (Item : Buffer) return Natural is             (Item.Data'Last);
+   function Get_Free_Space_Length (Item : Buffer) return Natural is                 (Item.Data (Get_Free_Space_Index_First (Item) .. Get_Free_Space_Index_Last (Item))'Length);
+   function Get_Free_Space_Access (Item : in out Buffer) return String_Access is    (Item.Data (Get_Free_Space_Index_First (Item) .. Get_Free_Space_Index_Last (Item))'Unrestricted_Access);
+   function Get_Free_Space (Item : Buffer) return String is                         (Item.Data (Get_Free_Space_Index_First (Item) .. Get_Free_Space_Index_Last (Item)));
+   function Get_Free_Space_Address (Item : in out Buffer) return Address is         (Item.Data (Get_Free_Space_Index_First (Item))'Address);
 
-   function Is_Empty (Container : Buffer) return Boolean is
-   begin
-      return Container.Last = 0;
-   end;
+   function Get_Occupied_Space_Index_First (Item : Buffer) return Natural is            (Item.Data'First);
+   function Get_Occupied_Space_Index_Last (Item : Buffer) return Natural is             (Item.Last);
+   function Get_Occupied_Space_Length (Item : Buffer) return Natural is                 (Item.Data (Get_Occupied_Space_Index_First (Item) .. Get_Occupied_Space_Index_Last (Item))'Length);
+   function Get_Occupied_Space_Access (Item : in out Buffer) return String_Access is    (Item.Data (Get_Occupied_Space_Index_First (Item) .. Get_Occupied_Space_Index_Last (Item))'Unrestricted_Access);
+   function Get_Occupied_Space (Item : Buffer) return String is                         (Item.Data (Get_Occupied_Space_Index_First (Item) .. Get_Occupied_Space_Index_Last (Item)));
+   function Get_Occupied_Space_Address (Item : in out Buffer) return Address is         (Item.Data (Get_Occupied_Space_Index_First (Item))'Address);
 
-   function Is_Fitting (Container : Buffer; Item : String) return Boolean is
-   begin
-      return Container.Data'Last - Container.Last >= Item'Length;
-   end;
-
---     procedure Insert (Container : in out String; Item : String) is
---        pragma Assert (Item'Length > Container'Length, "Item is larger than container.");
---        pragma Assert (Item'First in Container'Range, "Item'First is not in Container'Range.");
---        pragma Assert (Item'Last in Container'Range, "Item'Last is not in Container'Range.");
---     begin
---        Container (Item'Range) := Item;
---     end;
+   function Is_Full (Container : Buffer) return Boolean is (Container.Last >= Container.Data'Last);
+   function Is_Empty (Container : Buffer) return Boolean is (Container.Last = 0);
+   function Is_Fitting (Container : Buffer; Item : String) return Boolean is (Container.Data'Last - Container.Last >= Item'Length);
 
    procedure Append (Container : in out Buffer; Item : String) is
       subtype Data_Index is Positive range Container.Data'First .. Container.Data'Last;
@@ -31,26 +28,6 @@ package body String_Buffers is
    begin
       Container.Data (Item_Index) := Item;
       Container.Last := Item_Index'Last;
-   end;
-
-   function Get_Occupied_Space_Reference (Item : in out Buffer) return String_Access is
-   begin
-      return Item.Data (Item.Data'First .. Item.Last)'Unrestricted_Access;
-   end;
-
-   function Get_Free_Space_Reference (Item : in out Buffer) return String_Access is
-   begin
-      return Item.Data (Item.Last + 1 .. Item.Data'Last)'Unrestricted_Access;
-   end;
-
-   function Get_Occupied_Space (Item : Buffer) return String is
-   begin
-      return Item.Data (Item.Data'First .. Item.Last);
-   end;
-
-   function Get_Free_Space (Item : Buffer) return String is
-   begin
-      return Item.Data (Item.Last + 1 .. Item.Data'Last);
    end;
 
    procedure Decrease_Free_Space (Item : in out Buffer; Count : Natural) is

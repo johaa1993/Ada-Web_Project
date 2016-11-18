@@ -17,7 +17,7 @@ procedure Test_Socket1 is
    Client_Address : Sock_Addr_Type;
    Request_No_Block : Request_Type := (Non_Blocking_IO, True);
    C : Character;
-   Data : String_Buffers.Buffer (100);
+   Data : String_Buffers.Buffer (10);
 begin
    Initialize;
    Empty (Write_Set);
